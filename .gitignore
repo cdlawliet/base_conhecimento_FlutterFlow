@@ -1,0 +1,22 @@
+# OS metadata
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE / Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Temporary files
+*.tmp
+*.log
+
+# Workspace specific (Antigravity/Gemini logs)
+.gemini/
+.antigravity/
+brain/
+implementation_plan.md
+task.md
+walkthrough.md
