@@ -9,6 +9,7 @@ Bem-vindo à minha base de conhecimento de componentes e ações customizadas pa
 ### 🛠️ Custom Actions
 - **[Color Picker](file:///Actions/ColorPicker/DOCUMENTACAO.md)**: Seletor de cores híbrido (Bottom Sheet ou Dialog) com atualização em tempo real e Roda de Cores livre.
 - **[Share File](file:///Actions/ShareFile/shareFile_DOCUMENTACAO.md)**: Sistema de compartilhamento universal que resolve incompatibilidades entre Web (Bytes) e Native (Path).
+- **[Print PDF](file:///Actions/Print/DOCUMENTACAO.md)**: Aciona o diálogo de impressão nativo do sistema operacional passando os bytes de um arquivo.
 
 ### 📦 Custom Widgets
 - **[Leitor de PDF (Syncfusion)](file:///Widgets/Leitor%20PDF/DOCUMENTACAO.md)**: Visualizador de PDF premium com zoom, impressão, download e controles de interface dinâmicos.
