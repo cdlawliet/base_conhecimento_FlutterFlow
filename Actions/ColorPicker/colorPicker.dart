@@ -50,7 +50,7 @@ Future<Color?> customcolorPickerAction(
       borderRadius: borderRadius ?? 23,
       spacing: spacing ?? 12,
       runSpacing: runSpacing ?? 12,
-      elevation: 3, 
+      elevation: 3,
       hasBorder: false,
 
       // Cabeçalho da janela de seleção
@@ -61,14 +61,15 @@ Future<Color?> customcolorPickerAction(
           child: Text(
             textheading ?? 'Escolha a Cor',
             textAlign: TextAlign.center, // Centralizando texto
-            style: Theme.of(context).textTheme.titleLarge?.copyWith( // Fonte um pouco menor
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  // Fonte um pouco menor
                   fontWeight: FontWeight.bold,
                   letterSpacing: -0.5,
                 ),
           ),
         ),
       ),
-      
+
       // Subtítulo descritivo do seletor
       subheading: Padding(
         padding: const EdgeInsets.only(bottom: 12.0, top: 12.0),
@@ -77,9 +78,14 @@ Future<Color?> customcolorPickerAction(
           child: Text(
             textSubHeading ?? 'Selecione uma cor para personalizar o visual',
             textAlign: TextAlign.center, // Centralizando texto
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith( // Fonte menor
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  // Fonte menor
                   fontWeight: FontWeight.w500,
-                  color: Theme.of(context).textTheme.labelMedium?.color?.withOpacity(0.7),
+                  color: Theme.of(context)
+                      .textTheme
+                      .labelMedium
+                      ?.color
+                      ?.withOpacity(0.7),
                 ),
           ),
         ),
@@ -87,7 +93,7 @@ Future<Color?> customcolorPickerAction(
 
       // Roda de cor moderna (Color Wheel)
       wheelDiameter: wheelDiameter ?? 240,
-      wheelWidth: wheelWidth ?? 24, 
+      wheelWidth: wheelWidth ?? 24,
       wheelSubheading: Padding(
         padding: const EdgeInsets.only(bottom: 12.0, top: 16.0),
         child: SizedBox(
@@ -97,7 +103,11 @@ Future<Color?> customcolorPickerAction(
             textAlign: TextAlign.center, // Centralizando texto
             style: Theme.of(context).textTheme.titleSmall?.copyWith(
                   fontWeight: FontWeight.w500,
-                  color: Theme.of(context).textTheme.labelMedium?.color?.withOpacity(0.7),
+                  color: Theme.of(context)
+                      .textTheme
+                      .labelMedium
+                      ?.color
+                      ?.withOpacity(0.7),
                 ),
           ),
         ),
@@ -155,24 +165,25 @@ Future<Color?> customcolorPickerAction(
       // Copiar e colar cor rápido e intuitivo
       copyPasteBehavior: const ColorPickerCopyPasteBehavior(
         longPressMenu: true,
-        copyButton: false, // << REMOVER ESTE BOTÃO E O PASTE FORÇA O TEXTO HEX A FICAR 100% CENTRALIZADO!
+        copyButton:
+            false, // << REMOVER ESTE BOTÃO E O PASTE FORÇA O TEXTO HEX A FICAR 100% CENTRALIZADO!
         pasteButton: false,
         copyFormat: ColorPickerCopyFormat.hexRRGGBB,
       ),
 
       // Estilos atualizados para os textos e códigos auxiliares
       materialNameTextStyle: Theme.of(context).textTheme.labelMedium?.copyWith(
-        fontWeight: FontWeight.w600,
-        color: designColor ?? Theme.of(context).primaryColor,
-      ),
+            fontWeight: FontWeight.w600,
+            color: designColor ?? Theme.of(context).primaryColor,
+          ),
       colorNameTextStyle: Theme.of(context).textTheme.labelMedium?.copyWith(
-        fontWeight: FontWeight.w600,
-      ),
+            fontWeight: FontWeight.w600,
+          ),
       colorCodeTextStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
-        fontFamily: 'monospace',
-        fontWeight: FontWeight.bold,
-        letterSpacing: 1.0,
-      ),
+            fontFamily: 'monospace',
+            fontWeight: FontWeight.bold,
+            letterSpacing: 1.0,
+          ),
 
       // Removemos os Actions do componente base para usarmos os nossos próprios super elaborados
       actionButtons: const ColorPickerActionButtons(dialogActionButtons: false),
@@ -212,15 +223,19 @@ Future<Color?> customcolorPickerAction(
                     const SizedBox(height: 8),
                     buildColorPicker(),
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 24.0, vertical: 12.0),
                       child: SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: designColor ?? initialColor ?? const Color(0xFF4B39EF), 
-                            foregroundColor: Colors.white, 
+                            backgroundColor: designColor ??
+                                initialColor ??
+                                const Color(0xFF4B39EF),
+                            foregroundColor: Colors.white,
                             padding: const EdgeInsets.symmetric(vertical: 16),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(14)),
                             elevation: 2,
                           ),
                           onPressed: () {
@@ -229,7 +244,8 @@ Future<Color?> customcolorPickerAction(
                           },
                           child: const Text(
                             'Confirmar',
-                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 16),
                           ),
                         ),
                       ),
@@ -255,7 +271,7 @@ Future<Color?> customcolorPickerAction(
         return Transform.scale(
           scale: 0.85 + (0.15 * curve), // Cresce suavemente
           child: Opacity(
-            opacity: a1.value,           // Fade na entrada
+            opacity: a1.value, // Fade na entrada
             child: child,
           ),
         );
@@ -263,9 +279,10 @@ Future<Color?> customcolorPickerAction(
       pageBuilder: (context, a1, a2) {
         return AlertDialog(
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(24.0), 
+            borderRadius: BorderRadius.circular(24.0),
           ),
-          contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
           titlePadding: EdgeInsets.zero,
           actionsPadding: const EdgeInsets.fromLTRB(24, 0, 24, 20),
           elevation: 8,
@@ -283,7 +300,8 @@ Future<Color?> customcolorPickerAction(
                   child: OutlinedButton(
                     style: OutlinedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 14),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14)),
                       side: BorderSide(color: Theme.of(context).dividerColor),
                     ),
                     onPressed: () {
@@ -298,19 +316,25 @@ Future<Color?> customcolorPickerAction(
                     ),
                   ),
                 ),
-                const SizedBox(width: 16), // Espaço entre os botões para respirar
+                const SizedBox(
+                    width: 16), // Espaço entre os botões para respirar
                 Expanded(
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: designColor ?? initialColor ?? const Color(0xFF4B39EF), // << COR INICIAL APLICADA AQUI ELEGANTEMENTE!
-                      foregroundColor: Colors.white, // Texto branco sobre o Color inicial
+                      backgroundColor: designColor ??
+                          initialColor ??
+                          const Color(
+                              0xFF4B39EF), // << COR INICIAL APLICADA AQUI ELEGANTEMENTE!
+                      foregroundColor:
+                          Colors.white, // Texto branco sobre o Color inicial
                       padding: const EdgeInsets.symmetric(vertical: 14),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14)),
                       elevation: 2,
                     ),
                     onPressed: () {
-                       isConfirmed = true;
-                       Navigator.of(context).pop();
+                      isConfirmed = true;
+                      Navigator.of(context).pop();
                     },
                     child: const Text(
                       'Confirmar',
@@ -329,7 +353,7 @@ Future<Color?> customcolorPickerAction(
   // Se o usuário clicar em Cancelar ou arrastar para baixo/fechar o pop-up por fora, nós revertemos a cor na interface pro valor inicial.
   if (!isConfirmed) {
     selectedColor = initialColor ?? const Color(0xFF4B39EF);
-    rebuilpage(); 
+    rebuilpage();
   }
 
   return selectedColor;
