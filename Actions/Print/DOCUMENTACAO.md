@@ -1,23 +1,32 @@
-# 🖨️ Print PDF Action
+# Print PDF Action
 
-Uma Custom Action essencial para envio de documentos PDF diretamente para a fila de impressão nativa do sistema operacional (Android, iOS, Web, macOS, Windows).
+Custom Action para abrir o diálogo nativo de impressão a partir dos bytes de um PDF armazenado em `FFUploadedFile`.
 
-## 📦 Dependências
+## Dependências
+
 Adicione no FlutterFlow:
 - `printing`
 - `pdf`
 
-## 🛠️ Parâmetros
+## Parâmetros
 
 | Parâmetro | Tipo | Descrição |
 |-----------|------|-----------|
-| `pdfFile` | `FFUploadedFile?` | O arquivo do PDF a ser impresso. Deve conter o array de bytes (`bytes`). |
+| `pdfFile` | `FFUploadedFile?` | Arquivo PDF que deve conter `bytes` válidos. |
 
-## 🚀 Como Funciona
-A ação tenta ler os bytes contidos na variável `FFUploadedFile`. Caso os bytes sejam válidos, ela aciona o pacote `printing`, que evoca a tela de spooler/diálogo de impressão nativo do dispositivo.
+## Como funciona
 
-## 📥 Retorno
-Retorna uma `String?` contendo a mensagem de erro em caso de falha, ou `null` se a impressão for chamada com sucesso.
+- Se `pdfFile` for nulo ou não tiver bytes, a action retorna uma mensagem de erro.
+- Quando os bytes são válidos, ela chama `Printing.layoutPdf` e entrega o conteúdo diretamente ao sistema de impressão.
 
-> [!TIP]
-> Caso você passe essa action em um fluxo, você pode checar se o retorno da Action possui algum valor (is set and not empty). Se houver, você pode exibir num SnackBar para o usuário informando que ocorreu uma falha de impressão!
+## Retorno
+
+Retorna `String?`:
+
+- `null` quando o diálogo de impressão é aberto com sucesso
+- uma mensagem de erro quando o arquivo é inválido ou a impressão falha
+
+## Observações
+
+- A action não reconstrói o PDF; ela apenas envia os bytes recebidos para impressão.
+- O sucesso depende do suporte à impressão no dispositivo e da disponibilidade do serviço nativo.

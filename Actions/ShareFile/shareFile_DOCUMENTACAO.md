@@ -1,28 +1,40 @@
-# 🔗 Share File Action
+# Share File Action
 
-Ação focada de compartilhamento assíncrono universal multiplataforma, baseada na biblioteca `share_plus`. Desenvolvida para garantir que o compartilhamento funcione tanto na Web quanto em dispositivos nativos sem erros de sistema de arquivos.
+Action de compartilhamento multiplataforma baseada em `share_plus`, preparada para trabalhar com `FFUploadedFile` no FlutterFlow.
 
-## 📦 Dependências
+## Dependências
+
 Adicione no FlutterFlow:
 - `share_plus`
 - `path_provider`
 
-## 🛠️ Parâmetros
+## Parâmetros
 
 | Parâmetro | Tipo | Descrição |
 |-----------|------|-----------|
-| `file` | `FFUploadedFile` | Os bytes brutos do arquivo (PDF, Imagem, etc.) a serem compartilhados. |
-| `fileName` | `String` | Nome sugerido para o arquivo (ex: "Pedido_123"). **Nota:** A extensão `.pdf` é adicionada automaticamente no código atual. |
+| `file` | `FFUploadedFile` | Arquivo contendo os bytes que serão compartilhados. |
+| `fileName` | `String` | Nome base do arquivo. O código atual adiciona `.pdf` automaticamente. |
 
-## 🌐 Lógica multiplataforma
+## Como funciona
 
-Esta action resolve a diferença drástica entre como a Web e o Mobile lidam com arquivos:
+- Se `file.bytes` estiver vazio ou nulo, a action lança exceção.
+- Na Web, o compartilhamento é feito com `XFile.fromData`, sem gravar arquivo em disco.
+- Em Android, iOS e desktop, o arquivo é salvo temporariamente em cache antes do compartilhamento.
 
-- **Web (Chrome/Safari/Edge):** Utiliza `kIsWeb` para converter os bytes diretamente em um `XFile.fromData`. Isso abre a gaveta de compartilhamento do navegador ou inicia o download sem tentar salvar no disco rígido do usuário, evitando erros de permissão.
-- **Nativo (Android/iOS):** Utiliza o `path_provider` para salvar temporariamente o arquivo no diretório de cache do aplicativo (`getTemporaryDirectory`) e então compartilha o caminho (path) desse arquivo. Isso garante máxima compatibilidade com apps como WhatsApp e E-mail.
+## Comportamento atual
 
-> [!IMPORTANT]
-> O código atual força a extensão `.pdf`. Se precisar compartilhar outros tipos de arquivo, a linha `final fullFileName = '${fileName}.pdf';` deve ser ajustada para aceitar a extensão dinamicamente ou detectar o mimetype.
+O código está fixado para PDF:
 
-## 🚀 Como Usar
-Basta chamar a action passando o `FFUploadedFile` capturado ou gerado anteriormente e definir um nome para o arquivo. A action cuidará do resto, garantindo que o usuário veja a interface de compartilhamento nativa do sistema operacional dele.
+- o nome final sempre vira `${fileName}.pdf`
+- o MIME type sempre é `application/pdf`
+- o texto compartilhado é `Pedido CD Tecnologia`
+- o assunto é `Compartilhando pedido`
+
+## Retorno
+
+A action é assíncrona e não retorna valor útil. Em caso de erro, faz `rethrow` após registrar a falha no log.
+
+## Observações
+
+- Para compartilhar outros tipos de arquivo, o código precisa ser ajustado para receber extensão, MIME type, texto e assunto de forma dinâmica.
+- Como o arquivo temporário é criado no cache, o sistema operacional pode removê-lo depois.

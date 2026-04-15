@@ -1,43 +1,59 @@
-# ✂️ Image Cropper Widget
+# Image Cropper Widget
 
-Um Widget avançado e ultra-responsivo para edição de imagens. Permite visualizar, aplicar zoom dinâmico por gestos, desenhar anotações e realizar o recorte final com suporte a transparência e múltiplos formatos (WebP, PNG, JPG).
+Widget de edição de imagem com recorte, anotações e exportação em múltiplos formatos. Foi pensado para fluxos em que o usuário precisa ajustar enquadramento, desenhar por cima da imagem e receber um `FFUploadedFile` final já processado.
 
-## 📦 Dependências
+## Dependências
+
 Adicione no FlutterFlow:
 - `flutter_image_compress`
 
-## 🛠️ Parâmetros Principais
+## Parâmetros
 
 | Parâmetro | Tipo | Descrição |
 |-----------|------|-----------|
-| `imageFile` | `FFUploadedFile` | O arquivo binário bruto capturado pela câmera ou galeria. |
-| `cropShape` | `String` | Define o formato da máscara: `"circle"` (círculo) ou `"rectangle"` (retângulo). |
-| `aspectRatio` | `double?` | Proporção do recorte (ex: `1.0` para quadrado, `16/9`, `4/3`). Apenas para o modo retângulo. |
-| `backgroundMaskOpacity` | `double?` | Opacidade da área externa ao recorte (0.0 a 1.0). Default: `0.65`. |
-| `confirmButtonColor` | `Color` | Cor do botão de confirmação e da barra de ferramentas superior. |
-| `cropImageOnSave` | `bool` | Se `true`, a imagem será fisicamente recortada no formato da máscara ao salvar. Se `false`, apenas as coordenadas centrais (Focus X/Y) são retornadas. |
+| `width` | `double?` | Largura do widget. |
+| `height` | `double?` | Altura do widget. |
+| `imageFile` | `FFUploadedFile` | Imagem de entrada, obrigatoriamente com `bytes`. |
+| `cropShape` | `String` | Formato da máscara: `circle` ou `rectangle`. |
+| `aspectRatio` | `double?` | Proporção do recorte em modo retangular. |
+| `minZoom` | `double?` | Mantido por compatibilidade, sem efeito prático no zoom atual. |
+| `maxZoom` | `double?` | Mantido por compatibilidade, sem efeito prático no zoom atual. |
+| `backgroundMaskOpacity` | `double?` | Opacidade da área externa à máscara, de `0.0` a `0.95`. |
+| `confirmButtonColor` | `Color` | Cor do cabeçalho e do botão principal. |
+| `cropImageOnSave` | `bool` | Se `true`, exporta a imagem já recortada para o enquadramento selecionado. |
+| `onConfirm` | `Future Function(...)` | Callback executado ao confirmar ou cancelar. |
 
-## 🖌️ Ferramentas de Edição (Anotação)
-O widget possui uma barra de ferramentas superior que permite alternar entre o modo **Mover** (zoom/pan) e o modo **Anotar**:
-- **Livre (Pen):** Desenho à mão livre.
-- **Retângulo/Círculo:** Inserir formas geométricas sobre a imagem.
-- **Borracha:** Apagar anotações específicas.
-- **Cores:** Paleta para mudar a cor do pincel.
-- **Pincel:** Slider para ajustar a espessura do traço.
+## Ferramentas disponíveis
 
-## 💾 Configurações de Output
-O usuário pode escolher o formato de saída no momento da edição:
-- **PNG:** Mantém transparência (ideal para círculos), porém gera arquivos maiores.
-- **JPG:** Alta compressão, ideal para fotos sem necessidade de transparência.
-- **WEBP:** O melhor equilíbrio entre qualidade, transparência e tamanho reduzido.
+- Modo mover com pan e zoom livre
+- Modo anotação com desenho livre, retângulo, círculo e borracha
+- Desfazer última anotação
+- Limpar todas as anotações
+- Resetar enquadramento inicial
+- Escolher cor do traço
+- Ajustar espessura do pincel
+- Escolher formato de saída entre `PNG`, `JPG` e `WEBP`
+- Ajustar qualidade de compressão
 
-## ⚡ Callback: `onConfirm`
-A action retorna 5 argumentos essenciais:
-1. `editedImage` (FFUploadedFile): A imagem final processada (com anotações e recortes).
-2. `focusX` (double): Coordenada X centralizada (-1 a 1) para enquadramento posterior.
-3. `focusY` (double): Coordenada Y centralizada (-1 a 1).
-4. `didConfirm` (bool): `true` se o usuário clicou em confirmar, `false` se cancelou.
-5. `formatFile` (String): O formato escolhido (`png`, `jpg` ou `webp`).
+## Callback `onConfirm`
 
-> [!TIP]
-> **Preservação de Qualidade:** Se `cropImageOnSave` for `false` e nenhuma anotação for feita, o widget retorna o arquivo original sem recomprensão, preservando 100% da qualidade original.
+O callback recebe 5 argumentos nesta ordem:
+
+1. `editedImage` (`FFUploadedFile`)
+2. `focusX` (`double`)
+3. `focusY` (`double`)
+4. `didConfirm` (`bool`)
+5. `formatFile` (`String`)
+
+## Comportamento importante
+
+- Se `cropImageOnSave` for `false` e o usuário não fizer nenhuma anotação, o widget devolve o arquivo original para preservar qualidade.
+- Mesmo quando o arquivo original é devolvido, `focusX` e `focusY` continuam sendo calculados com base no enquadramento.
+- Ao cancelar, o callback retorna o arquivo original, `focusX = 0.0`, `focusY = 0.0` e `didConfirm = false`.
+- O formato retornado em `formatFile` reflete a seleção atual da UI, mesmo que o arquivo original tenha sido mantido sem reconversão.
+
+## Observações
+
+- Se `imageFile.bytes` estiver vazio, o widget exibe erro em tela.
+- O recorte circular aplica clip oval apenas quando `cropImageOnSave` está ativo.
+- A exportação usa `flutter_image_compress` após renderizar a imagem em memória.

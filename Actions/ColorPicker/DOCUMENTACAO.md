@@ -1,38 +1,46 @@
-# 🎨 Color Picker Custom Action
+# Color Picker Custom Action
 
-Uma Custom Action híbrida e premium que abre uma interface rica de seleção de cores baseada no ecossistema `flex_color_picker`. Projetada para oferecer uma experiência de usuário (UX) fluida com atualizações em tempo real.
+Custom Action híbrida baseada em `flex_color_picker` para seleção de cores com preview em tempo real. Pode abrir como bottom sheet ou dialog central, dependendo do fluxo da tela.
 
-## 📦 Dependências
-Para funcionar, adicione no FlutterFlow:
+## Dependências
+
+Adicione no FlutterFlow:
 - `flex_color_picker`
 
-## 🛠️ Parâmetros e Inputs
+## Parâmetros
 
 | Parâmetro | Tipo | Descrição |
 |-----------|------|-----------|
-| `context` | `BuildContext` | Contexto do app (automático no FF). |
-| `rebuilpage` | `Future Function()` | **Crucial:** Callback invocado a cada micro-mudança na cor para atualizar a UI do app em tempo real. |
-| `textheading` | `String?` | Título principal do seletor (ex: "Escolha a Cor"). |
-| `textSubHeading` | `String?` | Subtítulo descritivo. |
-| `width` / `height` | `double?` | Dimensões de cada "box" de cor. |
-| `borderRadius` | `double?` | Arredondamento dos boxes de cor. |
-| `spacing` / `runSpacing` | `double?` | Espaçamento entre os itens da grade de cores. |
-| `wheelDiameter` | `double?` | Diâmetro da roda de cores (Livre). |
-| `wheelWidth` | `double?` | Espessura da borda da roda de cores. |
-| `enableprimary` | `bool?` | Habilita aba de cores principais (Material). |
-| `enableaccent` | `bool?` | Habilita aba de cores de destaque. |
-| `enablebw` | `bool?` | Habilita aba de tons de cinza (Preto e Branco). |
-| `enablecustom` | `bool?` | Habilita cores customizadas. |
-| `enablewheel` | `bool?` | Habilita a roda de cores livre. |
-| `initialColor` | `Color?` | Cor inicial ao abrir. Em caso de *Cancel*, o sistema reverte para esta cor. |
-| `isBottomSheet` | `bool?` | **Modo Visual:** <br>• `true`: Abre como gaveta inferior (Mobile friendly).<br>• `false`: Abre como Dialog central suspenso. |
-| `designColor` | `Color?` | Cor temática aplicada aos botões de ação e barras de ajuste. |
+| `context` | `BuildContext` | Contexto atual da página. |
+| `rebuilpage` | `Future Function()` | Callback disparado sempre que a cor muda e também quando a action precisa restaurar a cor inicial após cancelamento. |
+| `textheading` | `String?` | Título principal exibido no seletor. |
+| `textSubHeading` | `String?` | Texto auxiliar exibido abaixo do título. |
+| `width` | `double?` | Largura das amostras de cor. |
+| `height` | `double?` | Altura das amostras de cor. |
+| `borderRadius` | `double?` | Arredondamento das amostras. |
+| `spacing` | `double?` | Espaçamento horizontal entre cores. |
+| `runSpacing` | `double?` | Espaçamento vertical entre linhas. |
+| `wheelDiameter` | `double?` | Diâmetro da roda de cor. |
+| `wheelWidth` | `double?` | Espessura da roda de cor. |
+| `enableprimary` | `bool?` | Exibe a aba de cores principais. |
+| `enableaccent` | `bool?` | Exibe a aba de cores accent. |
+| `enablebw` | `bool?` | Exibe a aba de preto e branco. |
+| `enablecustom` | `bool?` | Exibe a aba de cores customizadas. |
+| `enablewheel` | `bool?` | Exibe a roda de cor livre. |
+| `initialColor` | `Color?` | Cor inicial e também fallback em caso de cancelamento. |
+| `isBottomSheet` | `bool?` | Se `true`, abre como bottom sheet; caso contrário, abre como dialog. |
+| `designColor` | `Color?` | Cor aplicada aos botões e detalhes visuais do componente. |
 
-## 🚀 Como Funciona
-A ação utiliza um `await` para aguardar a decisão do usuário. Enquanto o modal está aberto, cada movimento no seletor dispara o `rebuilpage()`, permitindo que você veja o impacto da cor em outros elementos da tela instantaneamente.
+## Comportamento
 
-> [!TIP]
-> Use o `rebuilpage` para atualizar uma variável de Local State e vincular essa cor a componentes de fundo ou botões, criando um efeito de customização extremamente elegante.
+- Enquanto o usuário interage, `rebuilpage()` é chamado para refletir a cor em tempo real na UI.
+- No modo `dialog`, existem ações explícitas de `Cancelar` e `Confirmar`.
+- No modo `bottom sheet`, a confirmação ocorre pelo botão `Confirmar`; se o modal for fechado sem confirmar, a cor é restaurada.
+- Quando `initialColor` é nula, o fallback usado é `Color(0xFF4B39EF)`.
 
-## 📥 Retorno
-Retorna um objeto `Color?`. Se o usuário clicar em **Confirmar**, retorna a cor selecionada. Se clicar em **Cancelar** ou fechar sem confirmar, retorna a `initialColor` original para manter a integridade do estado.
+## Retorno
+
+Retorna `Color?` com a cor final escolhida.
+
+- Se o usuário confirmar, retorna a cor selecionada.
+- Se cancelar ou fechar o seletor sem confirmar, retorna a `initialColor` ou o fallback padrão.

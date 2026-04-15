@@ -1,41 +1,47 @@
-# 📄 Leitor de PDF (Syncfusion) Widget
+# Leitor de PDF (Syncfusion)
 
-Implementação premium baseada no pacote `syncfusion_flutter_pdfviewer`. Este widget resolve limitações de visualização de PDFs grandes e complexos, oferecendo uma experiência nativa e fluida tanto no Mobile quanto na Web.
+Widget de visualização de PDF baseado em `syncfusion_flutter_pdfviewer`, com toolbar opcional, paginação, zoom e ações laterais configuráveis.
 
-## 📦 Dependências
+## Dependências
+
 Adicione no FlutterFlow:
 - `syncfusion_flutter_pdfviewer`
 
-## 🛠️ Parâmetros e Configurações
+## Parâmetros
 
 | Parâmetro | Tipo | Descrição |
 |-----------|------|-----------|
-| `width` / `height` | `double?` | Dimensões do widget. Recomenda-se usar `double.infinity` para preencher o container pai. |
-| `pdfURL` | `String?` | Link direto para o PDF (URL pública ou do Supabase/Firebase). |
-| `documentoPDF` | `FFUploadedFile?` | Arquivo PDF em formato de bytes (Local State ou Upload direto). |
-| `corHex` | `String?` | Cor do cabeçalho superior em formato HEX (ex: `#4B39EF`). |
-| `showTopBar` | `bool` | **Novo:** Liga/Desliga a barra superior que contém o título e o botão de fechar. |
-| `showDownloadIcon` | `bool` | Habilita o ícone de download no painel lateral. |
-| `showPrintIcon` | `bool` | Habilita o ícone de impressão no painel lateral. |
-| `showShareIcon` | `bool` | Habilita o ícone de compartilhamento no painel lateral. |
+| `width` | `double?` | Largura do widget. |
+| `height` | `double?` | Altura do widget. |
+| `pdfURL` | `String?` | URL pública do PDF para carregamento remoto. |
+| `documentoPDF` | `FFUploadedFile?` | PDF em bytes para carregamento local. |
+| `corHex` | `String?` | Cor da toolbar em HEX, por exemplo `#1565C0`. |
+| `onClose` | `Future Function()?` | Callback ao clicar em fechar. Se não for informado, o widget executa `Navigator.pop(context)`. |
+| `download` | `Future Function()?` | Callback do botão de download. |
+| `print` | `Future Function()?` | Callback do botão de impressão. |
+| `share` | `Future Function()?` | Callback do botão de compartilhamento. |
+| `showDownloadIcon` | `bool` | Exibe ou oculta o botão de download. |
+| `showPrintIcon` | `bool` | Exibe ou oculta o botão de impressão. |
+| `showShareIcon` | `bool` | Exibe ou oculta o botão de compartilhamento. |
+| `showTopBar` | `bool` | Exibe ou oculta a barra superior. |
 
-## ⚡ Actions (Callbacks)
+## Fonte do documento
 
-| Action | Descrição |
-|--------|-----------|
-| `onClose` | Disparada ao clicar no "X" da barra superior. Geralmente usada para `Navigator.pop`. |
-| `download` | Disparada ao clicar no ícone de download. Implemente a lógica de salvamento aqui. |
-| `print` | Disparada ao clicar no ícone de impressão. |
-| `share` | Disparada ao clicar no ícone de compartilhamento (conecte com a Action `ShareFile`). |
+O widget segue esta prioridade:
 
-## 🚀 Funcionalidades Inclusas
-- **Zoom Dinâmico:** Controles de Zoom In, Zoom Out e Fit Screen (Ajustar à tela).
-- **Paginação:** Indicador de página atual e total de páginas no rodapé.
-- **Visibilidade:** Botão "Olho" para ocultar/mostrar todas as ferramentas laterais de uma vez, limpando a visão do documento.
-- **Suporte Híbrido:** Carrega automaticamente via URL ou Bytes dependendo de qual parâmetro for enviado.
+1. Usa `documentoPDF.bytes` quando houver conteúdo local.
+2. Caso contrário, usa `pdfURL` se estiver preenchida.
+3. Se nenhum dos dois estiver disponível, mostra a mensagem `Nenhum PDF selecionado`.
 
-> [!IMPORTANT]
-> **Suporte Web:** Para garantir que o PDF carregue corretamente em navegadores (evitando erros de CORS ou renderização), certifique-se de que o arquivo `funcionar_web.js` (presente na pasta) esteja configurado se você estiver utilizando scripts customizados de carregamento.
+## Recursos incluídos
 
-## 🎨 Personalização
-A cor da barra superior (Toolbar) respeita a `corHex` informada ou utiliza a `Primary Color` do seu tema FlutterFlow como fallback automático.
+- Controles de zoom in, zoom out e reset para `zoomLevel = 1.0`
+- Rodapé com página atual e total de páginas
+- Painel lateral recolhível com ações visuais e callbacks
+- Toolbar superior opcional com botão de fechar
+
+## Observações
+
+- O botão `fit_screen` do código atual redefine o zoom para `1.0`; ele não executa um ajuste inteligente automático ao viewport.
+- `corHex` usa a cor primária do tema como fallback se a string vier vazia ou inválida.
+- Os callbacks `download`, `print` e `share` apenas disparam ações externas; a lógica dessas ações deve ser implementada no FlutterFlow.

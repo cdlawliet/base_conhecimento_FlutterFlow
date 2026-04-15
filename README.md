@@ -1,34 +1,38 @@
-# 🚀 Base de Conhecimento FlutterFlow
+# Base de Conhecimento FlutterFlow
 
-Bem-vindo à minha base de conhecimento de componentes e ações customizadas para **FlutterFlow**. Este repositório contém uma coleção de widgets e ações de alta performance, totalmente documentados e testados para facilitar o desenvolvimento multiplataforma.
-
----
-
-## 📂 O que há dentro?
-
-### 🛠️ Custom Actions
-- **[Color Picker](file:///Actions/ColorPicker/DOCUMENTACAO.md)**: Seletor de cores híbrido (Bottom Sheet ou Dialog) com atualização em tempo real e Roda de Cores livre.
-- **[Share File](file:///Actions/ShareFile/shareFile_DOCUMENTACAO.md)**: Sistema de compartilhamento universal que resolve incompatibilidades entre Web (Bytes) e Native (Path).
-- **[Print PDF](file:///Actions/Print/DOCUMENTACAO.md)**: Aciona o diálogo de impressão nativo do sistema operacional passando os bytes de um arquivo.
-
-### 📦 Custom Widgets
-- **[Leitor de PDF (Syncfusion)](file:///Widgets/Leitor%20PDF/DOCUMENTACAO.md)**: Visualizador de PDF premium com zoom, impressão, download e controles de interface dinâmicos.
-- **[Image Cropper](file:///Widgets/imageCropper/DOCUMENTACAO.md)**: Editor de imagem avançado com anotação (desenho livre, formas), recorte circular/retangular e exportação Multi-formato (WebP, PNG, JPG).
+Bem-vindo à minha base de conhecimento de componentes e ações customizadas para **FlutterFlow**. Este repositório reúne widgets e actions reutilizáveis, com documentação prática para acelerar integrações, visualização de arquivos e fluxos de edição.
 
 ---
 
-## 🔧 Configuração Rápida
-Cada diretório possui seu próprio arquivo de `DOCUMENTACAO.md` contendo:
-- **Dependências** necessárias (Pub.dev).
-- **Tabela de Parâmetros** (Inputs/Outputs).
-- **Dicas de Implementação** para FlutterFlow.
+## O que há dentro?
+
+### Custom Actions
+- **[Base64 To Document](Actions/base64ToDocument/DOCUMENTACAO.md)**: Converte uma string Base64 em `FFUploadedFile`, pronta para salvar, compartilhar, imprimir ou exibir.
+- **[Color Picker](Actions/ColorPicker/DOCUMENTACAO.md)**: Seletor de cores híbrido com atualização em tempo real e suporte a roda de cores.
+- **[Share File](Actions/ShareFile/shareFile_DOCUMENTACAO.md)**: Compartilhamento multiplataforma de PDFs a partir de `FFUploadedFile`.
+- **[Print PDF](Actions/Print/DOCUMENTACAO.md)**: Aciona o diálogo nativo de impressão a partir dos bytes de um PDF.
+
+### Custom Widgets
+- **[Leitor de PDF (Syncfusion)](Widgets/Leitor PDF/DOCUMENTACAO.md)**: Visualizador de PDF com zoom, paginação e ações opcionais de download, impressão e compartilhamento.
+- **[Image Cropper](Widgets/imageCropper/DOCUMENTACAO.md)**: Editor de imagem com recorte, anotações, exportação em múltiplos formatos e retorno de foco.
 
 ---
 
-## 🤝 Contribuições
-Este é um repositório pessoal, mas sinta-se à vontade para dar um **Fork** ou abrir uma **Issue** se encontrar algum bug ou tiver sugestões de melhoria!
+## Configuração rápida
+
+Cada diretório possui seu próprio arquivo de documentação contendo:
+- Dependências necessárias no FlutterFlow.
+- Tabela de parâmetros e callbacks.
+- Observações de uso e limitações atuais.
 
 ---
 
-## ⚖️ Licença
+## Contribuições
+
+Este é um repositório pessoal, mas sinta-se à vontade para fazer um fork ou abrir uma issue se encontrar algum bug ou tiver sugestões de melhoria.
+
+---
+
+## Licença
+
 Este projeto é de uso livre para a comunidade FlutterFlow.
