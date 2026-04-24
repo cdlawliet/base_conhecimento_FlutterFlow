@@ -9,6 +9,7 @@ Bem-vindo à minha base de conhecimento de componentes e ações customizadas pa
 ### Custom Actions
 - **[Base64 To Document](Actions/base64ToDocument/DOCUMENTACAO.md)**: Converte uma string Base64 em `FFUploadedFile`, pronta para salvar, compartilhar, imprimir ou exibir.
 - **[Color Picker](Actions/ColorPicker/DOCUMENTACAO.md)**: Seletor de cores híbrido com atualização em tempo real e suporte a roda de cores.
+- **[Force App Refresh](Actions/ForceAppRefresh/DOCUMENTACAO.md)**: Limpa caches em runtime e forca recarregamento no Web, com limpeza complementar no Android/iOS.
 - **[Share File](Actions/ShareFile/shareFile_DOCUMENTACAO.md)**: Compartilhamento multiplataforma de PDFs a partir de `FFUploadedFile`.
 - **[Print PDF](Actions/Print/DOCUMENTACAO.md)**: Aciona o diálogo nativo de impressão a partir dos bytes de um PDF.
 
