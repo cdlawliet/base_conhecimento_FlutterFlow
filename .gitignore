@@ -20,3 +20,16 @@ brain/
 implementation_plan.md
 task.md
 walkthrough.md
+roteiros_videos/
+
+# Python / Streamlit
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+.venv/
+venv/
+ConversorFastReport/.venv/
+ConversorFastReport/.streamlit/secrets.toml
