@@ -38,10 +38,12 @@ Future<FFUploadedFile> geraRecibo(
                 ),
               ),
             pw.ClipRRect(
-              borderRadius: const pw.BorderRadius.all(pw.Radius.circular(12)),
+              horizontalRadius: 12,
+              verticalRadius: 12,
               child: pw.Container(
                 decoration: pw.BoxDecoration(
                   color: PdfColors.white,
+                  borderRadius: const pw.BorderRadius.all(pw.Radius.circular(12)),
                   border: pw.Border.all(
                     color: PdfColor.fromInt(0xFFCBD5E1), // Slate 300
                     width: 1.5,
