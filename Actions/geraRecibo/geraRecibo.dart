@@ -21,35 +21,37 @@ Future<FFUploadedFile> geraRecibo(
       pageFormat: PdfPageFormat.a5.landscape,
       margin: const pw.EdgeInsets.all(20),
       build: (context) {
-        return pw.Stack(
-          children: [
-            if (logoImage != null)
-              pw.Positioned.fill(
-                child: pw.Center(
-                  child: pw.Opacity(
-                    opacity: 0.10,
-                    child: pw.Image(
-                      logoImage,
-                      width: 260,
-                      height: 150,
-                      fit: pw.BoxFit.contain,
+        return pw.ClipRRect(
+          horizontalRadius: 12,
+          verticalRadius: 12,
+          child: pw.Container(
+            decoration: pw.BoxDecoration(
+              color: PdfColors.white,
+              borderRadius: const pw.BorderRadius.all(pw.Radius.circular(12)),
+              border: pw.Border.all(
+                color: PdfColor.fromInt(0xFFCBD5E1), // Slate 300
+                width: 1.5,
+              ),
+            ),
+            child: pw.Stack(
+              children: [
+                // Marca d'água centralizada ao fundo do card (sobre o fundo branco, mas atrás do texto)
+                if (logoImage != null)
+                  pw.Positioned.fill(
+                    child: pw.Center(
+                      child: pw.Opacity(
+                        opacity: 0.10,
+                        child: pw.Image(
+                          logoImage,
+                          width: 260,
+                          height: 150,
+                          fit: pw.BoxFit.contain,
+                        ),
+                      ),
                     ),
                   ),
-                ),
-              ),
-            pw.ClipRRect(
-              horizontalRadius: 12,
-              verticalRadius: 12,
-              child: pw.Container(
-                decoration: pw.BoxDecoration(
-                  color: PdfColors.white,
-                  borderRadius: const pw.BorderRadius.all(pw.Radius.circular(12)),
-                  border: pw.Border.all(
-                    color: PdfColor.fromInt(0xFFCBD5E1), // Slate 300
-                    width: 1.5,
-                  ),
-                ),
-                child: pw.Column(
+                // Conteúdo do recibo
+                pw.Column(
                   crossAxisAlignment: pw.CrossAxisAlignment.stretch,
                   children: [
                     // Barra superior colorida (Teal)
@@ -191,9 +193,9 @@ Future<FFUploadedFile> geraRecibo(
                     ),
                   ],
                 ),
-              ),
+              ],
             ),
-          ],
+          ),
         );
       },
     ),
