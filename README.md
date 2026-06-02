@@ -10,6 +10,8 @@ Bem-vindo à minha base de conhecimento de componentes e ações customizadas pa
 - **[Base64 To Document](Actions/base64ToDocument/DOCUMENTACAO.md)**: Converte uma string Base64 em `FFUploadedFile`, pronta para salvar, compartilhar, imprimir ou exibir.
 - **[Color Picker](Actions/ColorPicker/DOCUMENTACAO.md)**: Seletor de cores híbrido com atualização em tempo real e suporte a roda de cores.
 - **[Force App Refresh](Actions/ForceAppRefresh/DOCUMENTACAO.md)**: Limpa caches em runtime e forca recarregamento no Web, com limpeza complementar no Android/iOS.
+- **[Gera Recibo](Actions/geraRecibo/DOCUMENTACAO.md)**: Gera um recibo de pagamento em PDF profissional no formato A5 em paisagem, com marca d'água de logo, formatação monetária e valor por extenso automáticos.
+- **[Relatorio PDF](Actions/relatorio_pdf/DOCUMENTACAO.md)**: Gera um PDF tabular dinamico a partir de um JSON e retorna `FFUploadedFile`.
 - **[Share File](Actions/ShareFile/shareFile_DOCUMENTACAO.md)**: Compartilhamento multiplataforma de PDFs a partir de `FFUploadedFile`.
 - **[Print PDF](Actions/Print/DOCUMENTACAO.md)**: Aciona o diálogo nativo de impressão a partir dos bytes de um PDF.
 
