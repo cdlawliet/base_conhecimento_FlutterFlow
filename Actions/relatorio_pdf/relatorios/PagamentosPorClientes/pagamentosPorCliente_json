@@ -1,0 +1,276 @@
+-- Retorna o JSON no formato esperado pela action relatorios.dart.
+-- Layout baseado no arquivo pagamentosPorCliente_edi6.pdf.
+
+WITH params AS (
+  SELECT
+    COALESCE(NULLIF(@DataI, ''), '2000-01-01')::date AS data_i,
+    COALESCE(NULLIF(@DataF, ''), '2050-12-31')::date AS data_f,
+    lpad(@Cliente, 8, '0') AS cliente,
+    COALESCE(NULLIF(@CaixaAPP, ''), '0') AS caixa_app
+),
+cliente AS (
+  SELECT
+    COALESCE(cli.c_codigo, p.cliente) AS c_codigo,
+    COALESCE(cli.c_cliente, '') AS c_cliente
+  FROM params p
+  LEFT JOIN a_client cli ON cli.c_codigo = p.cliente
+),
+dados AS (
+  SELECT
+    app.idpagarme::text AS idpagarme,
+    'APP'::text AS c_usuario,
+    NULL::text AS c_caixa,
+    '88'::text AS c_conta,
+    CASE
+      WHEN trim(coalesce(app.negociacao, '')) = '' THEN 'Auto Att'
+      ELSE 'Neg. ' || app.negociacao
+    END AS c_doc,
+    app.data_pagamento AS dt_caixa,
+    app.data_pagamento AS dt_efetiv,
+    CASE
+      WHEN trim(coalesce(app.negociacao, '')) = '' THEN 'Pagador ' || app.pagador
+      ELSE 'Negociador ' || app.negociador || chr(10) || 'Pagador ' || app.pagador
+    END AS c_histcomp,
+    app.juros_pagos::numeric AS juros_pagos,
+    0::numeric AS banco,
+    0::numeric AS din_ou_crt,
+    app.valor_pago::numeric AS val_app
+  FROM vs_app_pagamentos app
+  CROSS JOIN params p
+  WHERE app.data_pagamento >= p.data_i
+    AND app.data_pagamento <= p.data_f
+    AND app.codigo = p.cliente
+
+  UNION ALL
+
+  SELECT
+    ''::text AS idpagarme,
+    usr.c_usuario,
+    cxa.c_caixa,
+    ban.c_conta,
+    cxa.c_doc,
+    cxa.c_data AS dt_caixa,
+    COALESCE(ban.c_data, cxa.c_data) AS dt_efetiv,
+    COALESCE(NULLIF(cxa.c_histcomp, ''), cxa.c_historic) AS c_histcomp,
+    SUM(hp.c_juro)::numeric AS juros_pagos,
+    SUM(CASE WHEN cxs.c_codigo = '06' THEN cxd.c_valor ELSE 0 END)::numeric AS banco,
+    SUM(CASE WHEN cxs.c_codigo IN ('01', '02', '03', '04', '05', '07') THEN cxd.c_valor ELSE 0 END)::numeric AS din_ou_crt,
+    0::numeric AS val_app
+  FROM a_hpcont AS hp
+  JOIN a_contas AS con ON hp.c_chave = con.c_chave AND con.c_tipo = 'R'
+  JOIN a_movcxa AS cxa ON hp.c_chavecx = cxa.c_chave
+  LEFT JOIN a_movban AS ban ON ban.c_chave = cxa.c_chaveban
+  LEFT JOIN a_usuari AS usr ON trim(cxa.c_user) = trim(usr.c_codigo)
+  LEFT JOIN a_movcxa_det AS cxd ON cxa.c_chave = cxd.c_movcxa_id
+  LEFT JOIN a_caixas_saldos AS cxs ON cxd.c_sdcaixa_id = cxs.c_id
+  CROSS JOIN params p
+  WHERE hp.c_app_cobranca IS FALSE
+    AND con.c_codcf = p.cliente
+    AND cxa.c_cancel IS FALSE
+    AND cxa.c_caixa <> '98'
+    AND cxa.c_fil = '00'
+    AND cxa.c_transf = ''
+    AND cxa.c_data >= p.data_i
+    AND cxa.c_data <= p.data_f
+  GROUP BY
+    hp.c_chavecx,
+    usr.c_usuario,
+    cxa.c_caixa,
+    ban.c_conta,
+    cxa.c_doc,
+    cxa.c_data,
+    ban.c_data,
+    cxa.c_histcomp,
+    cxa.c_historic
+),
+relatorio AS (
+  SELECT d.*
+  FROM dados d
+  CROSS JOIN params p
+  WHERE CASE
+    WHEN p.caixa_app = '1' THEN d.c_usuario <> 'APP'
+    WHEN p.caixa_app = '2' THEN d.c_usuario = 'APP'
+    ELSE TRUE
+  END
+),
+totais AS (
+  SELECT
+    COUNT(*) AS qtd_registros,
+    COALESCE(SUM(juros_pagos), 0) AS total_juros,
+    COALESCE(SUM(banco), 0) AS total_banco,
+    COALESCE(SUM(din_ou_crt), 0) AS total_din_ou_crt,
+    COALESCE(SUM(val_app), 0) AS total_app,
+    COALESCE(SUM(banco + din_ou_crt + val_app), 0) AS total_recebido
+  FROM relatorio
+)
+SELECT
+  json_build_object(
+    'orientation', 'landscape',
+    'head', json_build_array(
+      json_build_object(
+        'columns', json_build_array(
+          json_build_object(
+            'text', 'Pagamentos por Cliente',
+            'alignment', 'center',
+            'fontSize', 14,
+            'fontStyle', 'bold'
+          )
+        )
+      ),
+      json_build_object(
+        'columns', json_build_array(
+          json_build_object(
+            'text', 'Periodo: ' || to_char(p.data_i, 'YYYY-MM-DD') || ' a ' || to_char(p.data_f, 'YYYY-MM-DD'),
+            'alignment', 'left',
+            'fontSize', 10
+          )
+        )
+      ),
+      json_build_object(
+        'columns', json_build_array(
+          json_build_object(
+            'text', 'Cliente: ' || c.c_codigo || ' - ' || c.c_cliente,
+            'alignment', 'left',
+            'fontSize', 10
+          )
+        )
+      )
+    ),
+    'body', json_build_object(
+      'showGrid', false,
+      'zebra', json_build_object(
+        'enabled', true,
+        'color', '#FFFFE8'
+      ),
+      'columns', json_build_array(
+        json_build_object('name', 'Usuario', 'alignment', 'left'),
+        json_build_object('name', 'CX', 'alignment', 'center'),
+        json_build_object('name', 'CT', 'alignment', 'center'),
+        json_build_object('name', 'Documento', 'alignment', 'left'),
+        json_build_object('name', 'Dt Caixa', 'alignment', 'center'),
+        json_build_object('name', 'Data efet.', 'alignment', 'center'),
+        json_build_object('name', 'Historico Complementar', 'alignment', 'left'),
+        json_build_object('name', 'Juros Pagos', 'alignment', 'right'),
+        json_build_object('name', 'R$ Banco', 'alignment', 'right'),
+        json_build_object('name', 'DIN / CRT', 'alignment', 'right'),
+        json_build_object('name', 'APP', 'alignment', 'right')
+      ),
+      'rows', COALESCE((
+        SELECT json_agg(
+          json_build_array(
+            COALESCE(r.c_usuario, ''),
+            COALESCE(r.c_caixa, ''),
+            COALESCE(r.c_conta, ''),
+            COALESCE(r.c_doc, ''),
+            to_char(r.dt_caixa, 'DD/MM/YYYY'),
+            to_char(r.dt_efetiv, 'DD/MM/YYYY'),
+            COALESCE(r.c_histcomp, ''),
+            to_char(COALESCE(r.juros_pagos, 0), 'FM"R$ "999G999G999G990D00'),
+            to_char(COALESCE(r.banco, 0), 'FM"R$ "999G999G999G990D00'),
+            to_char(COALESCE(r.din_ou_crt, 0), 'FM"R$ "999G999G999G990D00'),
+            to_char(COALESCE(r.val_app, 0), 'FM"R$ "999G999G999G990D00')
+          )
+          ORDER BY r.dt_caixa DESC, r.c_caixa ASC, r.dt_efetiv ASC
+        )
+        FROM relatorio r
+      ), '[]'::json)
+    ),
+    'footer', json_build_array(
+      json_build_object(
+        'columns', json_build_array(
+          json_build_object(
+            'text', 'Quantidade de Registros: ' || t.qtd_registros,
+            'alignment', 'left',
+            'fontSize', 9
+          )
+        )
+      ),
+      json_build_object(
+        'columns', json_build_array(
+          json_build_object(
+            'text', 'Juros Recebido :',
+            'alignment', 'left',
+            'fontSize', 9,
+            'fontStyle', 'bold'
+          ),
+          json_build_object(
+            'text', to_char(t.total_juros, 'FM"R$ "999G999G999G990D00'),
+            'alignment', 'left',
+            'fontSize', 9,
+            'fontStyle', 'bold'
+          ),
+          json_build_object('text', '', 'alignment', 'left', 'fontSize', 9)
+        )
+      ),
+      json_build_object(
+        'columns', json_build_array(
+          json_build_object(
+            'text', 'Total Recebido em Banco :',
+            'alignment', 'left',
+            'fontSize', 9,
+            'fontStyle', 'bold'
+          ),
+          json_build_object(
+            'text', to_char(t.total_banco, 'FM"R$ "999G999G999G990D00'),
+            'alignment', 'left',
+            'fontSize', 9
+          ),
+          json_build_object('text', '', 'alignment', 'left', 'fontSize', 9)
+        )
+      ),
+      json_build_object(
+        'columns', json_build_array(
+          json_build_object(
+            'text', 'Total Recebido em dinheiro ou Cartao :',
+            'alignment', 'left',
+            'fontSize', 9,
+            'fontStyle', 'bold'
+          ),
+          json_build_object(
+            'text', to_char(t.total_din_ou_crt, 'FM"R$ "999G999G999G990D00'),
+            'alignment', 'left',
+            'fontSize', 9,
+            'fontStyle', 'bold'
+          ),
+          json_build_object('text', '', 'alignment', 'left', 'fontSize', 9)
+        )
+      ),
+      json_build_object(
+        'columns', json_build_array(
+          json_build_object(
+            'text', 'Total Recebido Pelo APP :',
+            'alignment', 'left',
+            'fontSize', 9,
+            'fontStyle', 'bold'
+          ),
+          json_build_object(
+            'text', to_char(t.total_app, 'FM"R$ "999G999G999G990D00'),
+            'alignment', 'left',
+            'fontSize', 9,
+            'fontStyle', 'bold'
+          ),
+          json_build_object('text', '', 'alignment', 'left', 'fontSize', 9)
+        )
+      ),
+      json_build_object(
+        'columns', json_build_array(
+          json_build_object(
+            'text', 'Total :',
+            'alignment', 'left',
+            'fontSize', 10,
+            'fontStyle', 'bold'
+          ),
+          json_build_object(
+            'text', to_char(t.total_recebido, 'FM"R$ "999G999G999G990D00'),
+            'alignment', 'left',
+            'fontSize', 10,
+            'fontStyle', 'bold'
+          ),
+          json_build_object('text', '', 'alignment', 'left', 'fontSize', 9)
+        )
+      )
+    )
+  ) AS dados_relatorio
+FROM params p
+CROSS JOIN cliente c
+CROSS JOIN totais t;

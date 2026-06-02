@@ -1,0 +1,82 @@
+-- script de dados
+SELECT
+*
+FROM (SELECT
+	idpagarme,
+	'APP' AS c_usuario,
+	NULL AS c_caixa,
+	'88' AS c_conta,
+	CASE WHEN trim(coalesce(negociacao,'')) = '' THEN 'Auto Att'
+		ELSE 'Neg. '||negociacao END AS c_doc,
+	data_pagamento AS dt_caixa,
+	data_pagamento AS dt_efetiv,
+	CASE WHEN trim(coalesce(negociacao,'')) = '' THEN 'Pagador '||pagador
+		ELSE 'Negociador '||negociador||chr(10)||'Pagador '||pagador END AS c_histcomp,
+	juros_pagos,
+	0 AS banco,
+	0 AS din_ou_crt,
+	valor_pago as val_app	
+FROM vs_app_pagamentos
+WHERE TRUE
+	AND data_pagamento >= (COALESCE(NULLIF(@DataI,''),'2000-01-01'))::date
+	AND data_pagamento <= (COALESCE(NULLIF(@DataF,''),'2050-12-31'))::date
+	AND codigo =  lpad(@Cliente,8,'0')
+UNION
+SELECT
+	'' AS idpagarme,
+	usr.c_usuario,
+	cxa.c_caixa,
+	ban.c_conta,
+	cxa.c_doc,
+	cxa.c_data AS dt_caixa,
+	COALESCE(ban.c_data,cxa.c_data) AS dt_efetiv,
+	COALESCE((NULLIF(cxa.c_histcomp,'')),cxa.c_historic) AS c_histcomp,
+	SUM(hp.c_juro) AS juros_pagos,
+	sum((CASE WHEN cxs.c_codigo = '06' THEN cxd.c_valor ELSE 0 END)) AS banco,
+	SUM((CASE WHEN cxs.c_codigo in ('01','02','03','04','05','07') THEN cxd.c_valor ELSE 0 END)) AS din_ou_crt,
+	0 AS val_app
+FROM a_hpcont AS hp
+	JOIN a_contas AS con ON (hp.c_chave = con.c_chave AND con.c_tipo = 'R')
+	JOIN a_movcxa AS cxa ON (hp.c_chavecx = cxa.c_chave)
+	LEFT JOIN a_movban AS ban ON (ban.c_chave = cxa.c_chaveban)
+	LEFT JOIN a_usuari AS usr ON trim(cxa.c_user) = trim(usr.c_codigo)
+	LEFT JOIN a_movcxa_det AS cxd ON (cxa.c_chave = cxd.c_movcxa_id)
+	LEFT JOIN a_caixas_saldos AS cxs ON (cxd.c_sdcaixa_id = cxs.c_id)
+WHERE hp.c_app_cobranca IS false
+	AND con.c_codcf = lpad(@Cliente,8,'0')
+	AND hp.c_app_cobranca IS FALSE
+	AND cxa.c_cancel IS FALSE
+	AND cxa.c_caixa <> '98'
+	AND cxa.c_fil = '00'
+	--AND (cxa.c_val06 >= 0 OR ((cxa.c_val01 + cxa.c_val02 + cxa.c_val03 + cxa.c_val04 + cxa.c_val05 + cxa.c_val07)> 0 AND ban.c_data NOTNULL))
+	AND cxa.c_transf = ''
+	AND cxa.c_data >= (COALESCE(NULLIF(@DataI,''),'2000-01-01'))::date
+	AND cxa.c_data <= (COALESCE(NULLIF(@DataF,''),'2050-12-31'))::date
+GROUP BY
+	idpagarme,
+	hp.c_chavecx,
+	usr.c_usuario,
+	cxa.c_caixa,
+	ban.c_conta,
+	cxa.c_doc,
+	cxa.c_data,
+	ban.c_data,
+	cxa.c_histcomp,
+	cxa.c_historic) AS relatorio
+		WHERE (
+		CASE WHEN @CaixaAPP = '1' THEN c_usuario <> 'APP'
+			 WHEN @CaixaAPP = '2' THEN c_usuario = 'APP'
+			 ELSE TRUE END
+		)
+ORDER BY
+	dt_caixa DESC,
+	c_caixa ASC,
+	dt_efetiv ASC
+
+-- script do cliente
+select
+	c_codigo,
+	c_cliente
+from a_client
+	where c_codigo = @Cliente
+

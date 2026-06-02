@@ -19,6 +19,12 @@ Bem-vindo à minha base de conhecimento de componentes e ações customizadas pa
 - **[Leitor de PDF (Syncfusion)](Widgets/Leitor PDF/DOCUMENTACAO.md)**: Visualizador de PDF com zoom, paginação e ações opcionais de download, impressão e compartilhamento.
 - **[Image Cropper](Widgets/imageCropper/DOCUMENTACAO.md)**: Editor de imagem com recorte, anotações, exportação em múltiplos formatos e retorno de foco.
 
+### Custom Functions
+- **[Array To String](Functions/arrayToString/arrayToString.dart)**: Converte uma lista de strings (`List<String>`) em uma única string unida por vírgulas.
+- **[Conversoes String - AlphaNumeric](Functions/conversoesString/alphaNumeric.dart)**: Remove todos os caracteres não alfanuméricos de uma string, restando apenas letras e números.
+- **[Conversoes String - Apply Mask](Functions/conversoesString/applyMask.dart)**: Aplica máscaras dinâmicas de formatação de CEP, Telefone e Placa em strings.
+- **[String To Array](Functions/stringToArray/stringToArray.dart)**: Converte uma string separada por vírgulas em uma lista de strings (`List<String>`), removendo espaços extras.
+
 ---
 
 ## Configuração rápida
