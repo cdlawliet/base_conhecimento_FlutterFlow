@@ -7,6 +7,7 @@ Bem-vindo à minha base de conhecimento de componentes e ações customizadas pa
 ## O que há dentro?
 
 ### Custom Actions
+- **[API Response Document](Actions/apiResponseDocument/DOCUMENTACAO.md)**: Converte uma resposta binaria recebida como `String` em `FFUploadedFile`, mantendo o nome de arquivo informado.
 - **[Base64 To Document](Actions/base64ToDocument/DOCUMENTACAO.md)**: Converte uma string Base64 em `FFUploadedFile`, pronta para salvar, compartilhar, imprimir ou exibir.
 - **[Color Picker](Actions/ColorPicker/DOCUMENTACAO.md)**: Seletor de cores híbrido com atualização em tempo real e suporte a roda de cores.
 - **[Force App Refresh](Actions/ForceAppRefresh/DOCUMENTACAO.md)**: Limpa caches em runtime e forca recarregamento no Web, com limpeza complementar no Android/iOS.
@@ -20,10 +21,9 @@ Bem-vindo à minha base de conhecimento de componentes e ações customizadas pa
 - **[Image Cropper](Widgets/imageCropper/DOCUMENTACAO.md)**: Editor de imagem com recorte, anotações, exportação em múltiplos formatos e retorno de foco.
 
 ### Custom Functions
-- **[Array To String](Functions/arrayToString/arrayToString.dart)**: Converte uma lista de strings (`List<String>`) em uma única string unida por vírgulas.
-- **[Conversoes String - AlphaNumeric](Functions/conversoesString/alphaNumeric.dart)**: Remove todos os caracteres não alfanuméricos de uma string, restando apenas letras e números.
-- **[Conversoes String - Apply Mask](Functions/conversoesString/applyMask.dart)**: Aplica máscaras dinâmicas de formatação de CEP, Telefone e Placa em strings.
-- **[String To Array](Functions/stringToArray/stringToArray.dart)**: Converte uma string separada por vírgulas em uma lista de strings (`List<String>`), removendo espaços extras.
+- **[Array To String](Functions/arrayToString/DOCUMENTACAO.md)**: Converte uma lista de strings (`List<String>`) em uma única string unida por vírgulas.
+- **[Conversoes String](Functions/conversoesString/DOCUMENTACAO.md)**: Remove caracteres não alfanuméricos e aplica máscaras dinâmicas de CEP, Telefone e Placa em strings.
+- **[String To Array](Functions/stringToArray/DOCUMENTACAO.md)**: Converte uma string separada por vírgulas em uma lista de strings (`List<String>`), removendo espaços extras.
 
 ---
 

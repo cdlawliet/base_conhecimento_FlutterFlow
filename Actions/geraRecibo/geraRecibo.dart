@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:http/http.dart' as http;
@@ -9,9 +10,11 @@ Future<FFUploadedFile> geraRecibo(
   String cliente,
   double valor,
   String motivo,
+  String? assinatura,
 ) async {
   final pdf = pw.Document();
   final logoImage = await _loadLogo(logo);
+  final signatureImage = _loadSignature(assinatura);
   final valorFormatado = _formatCurrencyPtBr(valor);
   final valorExtensoText = _valorPorExtenso(valor);
   final dataEmissao = _formatDatePtBr(DateTime.now());
@@ -172,6 +175,16 @@ Future<FFUploadedFile> geraRecibo(
                             // Assinatura
                             pw.Column(
                               children: [
+                                if (signatureImage != null)
+                                  pw.Container(
+                                    height: 40,
+                                    width: 150,
+                                    margin: const pw.EdgeInsets.only(bottom: 4),
+                                    child: pw.Image(
+                                      signatureImage,
+                                      fit: pw.BoxFit.contain,
+                                    ),
+                                  ),
                                 pw.Container(
                                   width: 200,
                                   height: 1,
@@ -222,6 +235,19 @@ Future<pw.MemoryImage?> _loadLogo(String logo) async {
     }
 
     return pw.MemoryImage(response.bodyBytes);
+  } catch (_) {
+    return null;
+  }
+}
+
+pw.MemoryImage? _loadSignature(String? base64Str) {
+  if (base64Str == null || base64Str.trim().isEmpty) {
+    return null;
+  }
+  try {
+    final cleaned = base64Str.contains(',') ? base64Str.split(',').last : base64Str;
+    final bytes = base64Decode(cleaned.trim());
+    return pw.MemoryImage(bytes);
   } catch (_) {
     return null;
   }

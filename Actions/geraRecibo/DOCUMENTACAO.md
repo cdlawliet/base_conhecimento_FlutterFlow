@@ -19,6 +19,7 @@ Future<FFUploadedFile> geraRecibo(
   String cliente,
   double valor,
   String motivo,
+  String? assinatura,
 )
 ```
 
@@ -30,6 +31,7 @@ Future<FFUploadedFile> geraRecibo(
 | `cliente` | `String` | Nome completo do cliente que realizou o pagamento. |
 | `valor` | `double` | Valor do recebimento. A action formata em Reais (`R$ 1.234,56`) e insere o valor por extenso automaticamente. |
 | `motivo` | `String` | Descrição do pagamento (ex: `Mensalidade Escolar`, `Serviços de Desenvolvimento`). |
+| `assinatura` | `String` | String Base64 contendo a imagem da assinatura. Se nula ou vazia, o recibo é gerado sem a imagem da assinatura. |
 
 ## Retorno
 
@@ -55,6 +57,7 @@ O texto do recibo é construído usando formatação rica (`RichText`), onde os 
    - `cliente` -> Tipo: `String`
    - `valor` -> Tipo: `Double`
    - `motivo` -> Tipo: `String`
+   - `assinatura` -> Tipo: `String` (nullable/não-obrigatório)
 4. Configure o **Action Return Value**:
    - Marque **Has Return Value** -> Ativo.
    - Selecione **Type** -> `Uploaded File (Bytes)`.
